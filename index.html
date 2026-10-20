@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kingman Permits — Blake — Oct 20 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #f0f0f0; -webkit-text-size-adjust: 100%; }
+  .header { text-align: center; padding: 12px 16px 8px; background: linear-gradient(135deg, #1a1f2e, #2d1a0d); border-bottom: 1px solid #3a2a1e; }
+  .logo { font-size: 11px; letter-spacing: 2px; color: #f59e0b; text-transform: uppercase; margin-bottom: 4px; }
+  .header h1 { font-size: 17px; font-weight: 700; color: #fff; }
+  .header .sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .header .zone { font-size: 10px; color: #f59e0b; margin-top: 4px; background: #2d1a0d; padding: 3px 8px; border-radius: 6px; display: inline-block; }
+  .header .staging-tag { font-size: 10px; color: #fbbf24; background: #3b280d; border: 1px solid #5c4a1e; border-radius: 4px; padding: 2px 8px; display: inline-block; margin-left: 6px; font-weight: 700; letter-spacing: 1px; }
+  .build-summary { background: #0d1520; border-bottom: 1px solid #1e3040; padding: 8px 12px; font-size: 10px; color: #64748b; line-height: 1.6; }
+  .build-summary strong { color: #f59e0b; }
+  .build-summary .audit { color: #94a3b8; margin-top: 2px; }
+  .stats { display: flex; gap: 4px; padding: 6px 8px; background: #0f1117; border-bottom: 1px solid #252d40; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 78px; background: #141926; border: 1px solid #252d40; border-radius: 8px; padding: 5px 4px; text-align: center; cursor: pointer; }
+  .stat.active { background: #1e2438; border-color: #f59e0b; }
+  .stat-num { font-size: 16px; font-weight: 800; color: #fff; }
+  .stat-num.green { color: #4ade80; }
+  .stat-num.amber { color: #fbbf24; }
+  .stat-num.purple { color: #c4b5fd; }
+  .stat-num.orange { color: #fb923c; }
+  .stat-num.red { color: #f87171; }
+  .stat-num.gray { color: #94a3b8; }
+  .stat-num.blue { color: #60a5fa; }
+  .stat-num.white { color: #f0f0f0; }
+  .stat-lbl { font-size: 8px; text-transform: uppercase; letter-spacing: 0.6px; color: #555; margin-top: 1px; }
+  .filters { display: flex; gap: 5px; flex-wrap: wrap; padding: 7px 8px 4px; background: #0f1117; border-bottom: 1px solid #1a2030; overflow-x: auto; }
+  .filters-secondary { display: flex; gap: 4px; flex-wrap: wrap; padding: 4px 8px 7px; background: #0f1117; border-bottom: 1px solid #252d40; overflow-x: auto; }
+  .filters-label { font-size: 9px; color: #475569; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; padding: 4px 6px 2px; width: 100%; }
+  .fchip { background: #1e2438; color: #8b95b3; border: 1.5px solid #2a3040; border-radius: 16px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; -webkit-appearance: none; -webkit-tap-highlight-color: rgba(0,0,0,0); white-space: nowrap; }
+  .fchip.active { background: #3a2a0d; color: #f59e0b; border-color: #5c4a1e; }
+  .fchip.allactive-chip.active { background: #1a3a2e; color: #6ee7b7; border-color: #2e6e58; }
+  .fchip.bckeep-chip.active { background: #0d3b0d; color: #4ade80; border-color: #2e6e2e; }
+  .fchip.bcverify-chip.active { background: #3b280d; color: #fbbf24; border-color: #7a5a1e; }
+  .fchip.ryan-chip.active { background: #251040; color: #c4b5fd; border-color: #4d2a7a; }
+  .fchip.builder-chip.active { background: #4a2000; color: #fb923c; border-color: #7a4000; }
+  .fchip.removed-chip.active { background: #3b0d0d; color: #f87171; border-color: #6e2e2e; }
+  .fchip.closed-chip.active { background: #1a1a1a; color: #94a3b8; border-color: #444; }
+  .fchip-sm { background: #141926; color: #64748b; border: 1px solid #1e2438; border-radius: 14px; padding: 3px 9px; font-size: 10px; font-weight: 500; cursor: pointer; font-family: inherit; -webkit-appearance: none; -webkit-tap-highlight-color: rgba(0,0,0,0); white-space: nowrap; }
+  .fchip-sm.active { background: #2a3040; color: #cbd5e1; border-color: #4a5568; }
+  .fchip-sm.bckeep-chip.active { background: #0d3b0d; color: #4ade80; border-color: #2e6e2e; }
+  .fchip-sm.bcverify-chip.active { background: #3b280d; color: #fbbf24; border-color: #7a5a1e; }
+  .fchip-sm.builder-chip.active { background: #4a2000; color: #fb923c; border-color: #7a4000; }
+  .fchip-sm.removed-chip.active { background: #3b0d0d; color: #f87171; border-color: #6e2e2e; }
+  .fchip-sm.closed-chip.active { background: #1a1a1a; color: #94a3b8; border-color: #444; }
+  .fchip-sm.newest-chip.active { background: #1a3a2e; color: #6ee7b7; border-color: #2e6e58; }
+  .view-toggle { display:flex; background:#0f1117; border-bottom:1px solid #252d40; padding:5px 8px; gap:5px; }
+  .view-btn { flex:1; padding:8px 0; font-size:12px; font-weight:700; border:1.5px solid #2a3040; border-radius:10px; cursor:pointer; font-family:inherit; background:#1e2438; color:#64748b; }
+  .view-btn.active { background:#3a2a0d; color:#f59e0b; border-color:#5c4a1e; }
+  #map { width: 100%; height: calc(100vh - 280px); min-height: 320px; background: #e8eef2; }
+  .pin { width: 26px; height: 26px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+  .pin-inner { transform: rotate(45deg); color: #fff; font-size: 10px; font-weight: 800; }
+  .pin.bckeep { background: #22c55e; }
+  .pin.bcverify { background: #fbbf24; }
+  .pin.ryan { background: #a78bfa; }
+  .pin.builder { background: #f97316; }
+  .pin.removed { background: #ef4444; }
+  .pin.closed { background: #6b7280; }
+  .leaflet-popup-content-wrapper { background: #1a1f2e; color: #f0f0f0; border: 1px solid #3a4556; border-radius: 12px; }
+  .leaflet-popup-tip { background: #1a1f2e; }
+  .leaflet-popup-content { margin: 10px; font-size: 12px; line-height: 1.5; }
+  .leaflet-popup-close-button { color: #888 !important; font-size: 18px !important; }
+  .detail { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1f2e; border-top: 2px solid #f59e0b; border-radius: 16px 16px 0 0; padding: 14px 14px 20px; max-height: 78vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.25s; z-index: 1000; }
+  .detail.open { transform: translateY(0); }
+  .detail-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: #888; font-size: 22px; cursor: pointer; }
+  .detail-addr { font-size: 15px; font-weight: 700; color: #fff; padding-right: 30px; }
+  .detail-meta { font-size: 12px; color: #9aa3b8; margin-top: 3px; margin-bottom: 8px; }
+  .bucket-badge { display: inline-block; border-radius: 10px; padding: 2px 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; margin-right: 4px; margin-top: 3px; }
+  .bb-bckeep { background: #0d3b0d; color: #4ade80; }
+  .bb-bcverify { background: #3b280d; color: #fbbf24; }
+  .bb-ryan { background: #251040; color: #c4b5fd; }
+  .bb-builder { background: #4a2000; color: #fb923c; }
+  .bb-removed { background: #3b0d0d; color: #f87171; }
+  .bb-closed { background: #1a1a1a; color: #94a3b8; }
+  .bb-mh { background: #1a1614; color: #fde68a; border: 1px solid #ca8a04; }
+  .bb-trust { background: #2a1a3b; color: #c4b5fd; }
+  .bb-urgent { background: #3b0d1a; color: #fb7185; border: 1px solid #be123c; }
+  .detail-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 12px; padding: 5px 0; border-bottom: 1px solid #252d40; }
+  .detail-row .k { color: #94a3b8; font-weight: 600; min-width: 110px; flex-shrink: 0; }
+  .detail-row .v { color: #e5e7eb; text-align: right; word-break: break-word; max-width: 60%; }
+  .detail-row .v.battery-yes { color: #4ade80; font-weight: 700; }
+  .detail-row .v.battery-no { color: #9ca3af; }
+  .detail-row .v.warn { color: #fb923c; font-weight: 600; }
+  .detail-row .v.unknown { color: #94a3b8; font-style: italic; }
+  .desc-box { margin-top: 10px; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .desc-content { font-size: 11px; color: #cbd5e1; background: #0d111c; border: 1px solid #252d40; border-radius: 8px; padding: 8px; line-height: 1.5; max-height: 100px; overflow-y: auto; font-family: monospace; }
+  .why-box { margin-top: 10px; background: #0d111c; border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #cbd5e1; line-height: 1.5; }
+  .why-box .label { font-size: 9px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 4px; display: block; }
+  .mh-box { margin-top: 8px; background: #1a1614; border-left: 3px solid #ca8a04; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #fde68a; line-height: 1.5; }
+  .mh-box .label { font-size: 9px; color: #ca8a04; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 4px; display: block; }
+  .notes-wrap { margin-top: 10px; }
+  .notes-wrap label { font-size: 10px; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.8px; }
+  .notes-wrap textarea { width: 100%; min-height: 48px; margin-top: 4px; background: #0d111c; color: #f0f0f0; border: 1px solid #2a3040; border-radius: 8px; padding: 8px; font-size: 13px; font-family: inherit; resize: vertical; }
+  .outcomes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; }
+  .obtn { background: #1e2438; color: #c4cde0; border: 1.5px solid #2a3040; border-radius: 10px; padding: 8px 4px; font-size: 10px; font-weight: 700; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  .obtn.active.apptset { background: #0d3b0d; color: #66bb6a; border-color: #2e6e2e; }
+  .obtn.active.notint { background: #3b0d0d; color: #f87171; border-color: #6e2e2e; }
+  .obtn.active.hassolar { background: #0d2a3b; color: #4fc3f7; border-color: #1e4d7a; }
+  .obtn.active.renter { background: #3b250d; color: #ffa726; border-color: #6e4e2e; }
+  .obtn.active.nih { background: #2a0d3b; color: #a78bfa; border-color: #4d2e7a; }
+  .obtn.active.called { background: #3b280d; color: #fbbf24; border-color: #7a5a1e; }
+  .obtn.active.notmoved { background: #251a3b; color: #c4b5fd; border-color: #4a3a7a; }
+  .obtn.active.soldu { background: #0d3b2a; color: #6ee7b7; border-color: #2e6e58; }
+  .save-btn { width: 100%; margin-top: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+  .save-btn:active { transform: scale(0.98); }
+  .legend { position: fixed; bottom: 12px; left: 12px; z-index: 999; background: rgba(15,17,23,0.92); border: 1px solid #252d40; border-radius: 10px; padding: 8px 10px; font-size: 10px; }
+  .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .legend-row:last-child { margin-bottom: 0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  #list-view { width: 100%; height: calc(100vh - 280px); min-height: 320px; overflow-y: auto; background: #0f1117; padding: 8px; }
+  .lcard { background: #1a1f2e; border: 1px solid #2a3040; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+  .lcard.bckeep { border-left: 4px solid #22c55e; }
+  .lcard.bcverify { border-left: 4px solid #fbbf24; }
+  .lcard.ryan { border-left: 4px solid #a78bfa; }
+  .lcard.builder { border-left: 4px solid #f97316; }
+  .lcard.removed { border-left: 4px solid #ef4444; opacity: 0.7; }
+  .lcard.closed { border-left: 4px solid #6b7280; opacity: 0.6; }
+  .lcard-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 6px; border-bottom: 1px solid #252d40; flex-wrap: wrap; gap: 6px; }
+  .lcard-id { font-size: 11px; font-weight: 800; color: #94a3b8; letter-spacing: 0.5px; font-family: monospace; }
+  .lcard-status { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px; white-space: nowrap; }
+  .lcard-body { padding: 10px 12px; }
+  .lcard-addr { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; line-height: 1.3; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .lcard-addr .addr-text { flex: 1 1 auto; }
+  .lcard-roof-btn { display: inline-block; background: #1d4ed8; color: #fff !important; border-radius: 6px; padding: 3px 8px; font-size: 10px; font-weight: 700; text-decoration: none; letter-spacing: 0.3px; white-space: nowrap; }
+  .lcard-roof-btn:active { transform: scale(0.95); }
+  .lcard-dir-btn { display: inline-block; background: #065f46; color: #fff !important; border-radius: 6px; padding: 3px 8px; font-size: 10px; font-weight: 700; text-decoration: none; letter-spacing: 0.3px; white-space: nowrap; }
+  .lcard-dir-btn:active { transform: scale(0.95); }
+  .detail-dir-btn { background: #065f46; color: #fff; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .lcard-zip { font-size: 10px; color: #888; margin-bottom: 6px; }
+  .detail-addr-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-right: 30px; }
+  .detail-addr-row .detail-addr { padding-right: 0; flex: 1 1 auto; }
+  .detail-roof-btn { background: #1d4ed8; color: #fff; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .lcard-tags { margin-bottom: 6px; }
+  .lcard-info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
+  .lcard-info-cell { background: #0f1117; border-radius: 6px; padding: 5px 7px; font-size: 10px; }
+  .lcard-info-cell .lci-label { color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-size: 9px; }
+  .lcard-info-cell .lci-value { color: #e5e7eb; font-weight: 600; margin-top: 1px; }
+  .lcard-system { background: #0d1a14; border-left: 3px solid #16a34a; border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; }
+  .lcard-system.unverified { background: #1a1614; border-left-color: #ca8a04; }
+  .lcard-system.unknown { background: #1a1a1a; border-left-color: #555; }
+  .lcard-system-detail { font-size: 11px; font-weight: 700; color: #86efac; margin-bottom: 2px; }
+  .lcard-system.unverified .lcard-system-detail { color: #fde68a; }
+  .lcard-system.unknown .lcard-system-detail { color: #aaa; font-style: italic; font-weight: 500; }
+  .lcard-system-contractor { font-size: 10px; color: #aaa; }
+  .lcard-mh { background: #1a1614; border-left: 2px solid #ca8a04; border-radius: 4px; padding: 5px 8px; margin-bottom: 6px; font-size: 10px; color: #fde68a; }
+  .lcard-mh strong { color: #facc15; }
+  .lcard-desc { font-size: 10px; color: #94a3b8; background: #0d111c; border: 1px solid #252d40; border-radius: 6px; padding: 7px; line-height: 1.5; margin-bottom: 8px; max-height: 80px; overflow-y: auto; font-family: monospace; }
+  .lcard-why { font-size: 11px; color: #cbd5e1; background: #0d111c; border-left: 2px solid #f59e0b; border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; line-height: 1.5; }
+  .lcard-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+  .lcard-nav-btn { background: #1e2438; color: #e5e7eb; border: 1.5px solid #2a3040; border-radius: 8px; padding: 7px 4px; font-size: 10px; font-weight: 700; text-align: center; text-decoration: none; display: block; }
+  .empty-list { text-align: center; padding: 40px 20px; color: #555; font-size: 13px; font-style: italic; }
+  .section-banner { background: #0d111c; border-left: 3px solid #f59e0b; padding: 8px 12px; margin: 12px 0 8px; font-size: 11px; font-weight: 800; color: #f59e0b; letter-spacing: 1px; text-transform: uppercase; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Solar Resource USA</div>
+  <h1>🔌 Kingman Permits — Blake</h1>
+  <div class="sub">Mohave County · UniSource · 86409 + 86413 + 86401 ref · Pulled Oct 20 2026</div>
+  <span class="zone">13 Active · Map + List · Oct 20 refresh</span>
+</div>
+
+<div class="build-summary">
+  <strong>Pull:</strong> 93 solar permits (86401/86409/86413) + 2 found by description → 72 dropped (Closed / final inspection / house already has a closed solar permit) → <strong>23 open · 13 Blake active</strong> | Status: In Review 1 · Ready To Issue 4 · Expired 8 | Buckets: P1 0 · P2A 1 · P2B 4 · P3 0 · P4 0 · P5 8 | <strong>10 new since May · 14 May permits now closed (installed) and removed · owners re-checked against the county assessor today</strong></div>
+</div>
+
+<div class="stats">
+  <div class="stat" data-filter="p1"><div id="stat-p1" class="stat-num red">3</div><div class="stat-lbl">🔥 Stalled</div></div>
+  <div class="stat" data-filter="p2a"><div id="stat-p2a" class="stat-num blue">6</div><div class="stat-lbl">🆕 Fresh</div></div>
+  <div class="stat" data-filter="p2b"><div id="stat-p2b" class="stat-num orange">5</div><div class="stat-lbl">🟠 Stalled Pre</div></div>
+  <div class="stat" data-filter="p3"><div id="stat-p3" class="stat-num green">4</div><div class="stat-lbl">⚡ Recent</div></div>
+  <div class="stat" data-filter="p4"><div id="stat-p4" class="stat-num amber">3</div><div class="stat-lbl">⚠️ Verify</div></div>
+  <div class="stat" data-filter="p5"><div id="stat-p5" class="stat-num gray">1</div><div class="stat-lbl">💀 Expired</div></div>
+  <div class="stat active" data-filter="all"><div id="stat-total" class="stat-num white">22</div><div class="stat-lbl">All</div></div>
+</div>
+
+<div class="filters" id="filters">
+  <button class="fchip active" data-filter="all">All (22)</button>
+  <button class="fchip" data-filter="p1">🔥 Stalled (3)</button>
+  <button class="fchip" data-filter="p2a">🆕 Fresh Applied (6)</button>
+  <button class="fchip" data-filter="p2b">🟠 Stalled Pre (5)</button>
+  <button class="fchip" data-filter="p3">⚡ Recent ≤30d (4)</button>
+  <button class="fchip" data-filter="p4">⚠️ Verify 30-60d (3)</button>
+  <button class="fchip" data-filter="p5">💀 Expired (1)</button>
+  <button class="fchip" data-filter="86409">86409 (13)</button>
+  <button class="fchip" data-filter="86413">86413 (9)</button>
+  <button class="fchip ryan-chip" data-filter="ryan">86401 Ryan ref (7)</button>
+  <button class="fchip" data-filter="unknocked">Unknocked</button>
+</div>
+<div class="filters-secondary" id="filters-secondary">
+  <span class="filters-label">Decision tags ▸</span>
+  <button class="fchip-sm bckeep-chip" data-filter="bckeep">✅ Blake Keep (5)</button>
+  <button class="fchip-sm bcverify-chip" data-filter="bcverify">⚠️ Blake Verify First (8)</button>
+  <button class="fchip-sm builder-chip" data-filter="builder">🏗 Builder Watch (2)</button>
+  <button class="fchip-sm removed-chip" data-filter="removed">❌ Removed (1)</button>
+  <button class="fchip-sm" data-filter="mh">🏠 MH Verify (9)</button>
+  <button class="fchip-sm newest-chip" data-filter="newest">🆕 Newest First (13)</button>
+  <button class="fchip-sm" data-filter="audit">📋 Audit View (23)</button>
+</div>
+
+<div class="view-toggle">
+  <button class="view-btn active" id="vbtn-map" onclick="switchView('map')">🗺 Map</button>
+  <button class="view-btn" id="vbtn-list" onclick="switchView('list')">📋 List</button>
+</div>
+
+<div id="map"></div>
+<div id="list-view" style="display:none"></div>
+
+<div class="legend">
+  <div class="legend-row"><div class="legend-dot" style="background:#22c55e"></div><span style="color:#4ade80">Keep / Actionable</span></div>
+  <div class="legend-row"><div class="legend-dot" style="background:#fbbf24"></div><span style="color:#fbbf24">Verify First</span></div>
+  <div class="legend-row"><div class="legend-dot" style="background:#a78bfa"></div><span style="color:#c4b5fd">Ryan Ref</span></div>
+  <div class="legend-row"><div class="legend-dot" style="background:#f97316"></div><span style="color:#fb923c">Builder Watch</span></div>
+  <div class="legend-row"><div class="legend-dot" style="background:#ef4444"></div><span style="color:#f87171">Likely Installed</span></div>
+  <div class="legend-row"><div class="legend-dot" style="background:#6b7280"></div><span style="color:#94a3b8">Closed</span></div>
+</div>
+
+<div class="detail" id="detail">
+  <button class="detail-close" onclick="closeDetail()">×</button>
+  <div class="detail-addr-row">
+    <div class="detail-addr" id="d-addr">—</div>
+    <a class="detail-roof-btn" id="d-roof-btn" href="#" target="_self">🏠 View Roof</a>
+    <a class="detail-dir-btn" id="d-dir-btn" href="#" target="_self">🚗 Get Directions</a>
+  </div>
+  <div class="detail-meta" id="d-meta">—</div>
+  <div id="d-badges"></div>
+  <div class="detail-row"><span class="k">Status</span><span class="v" id="d-status">—</span></div>
+  <div class="detail-row"><span class="k">Issued</span><span class="v" id="d-issued">—</span></div>
+  <div class="detail-row"><span class="k">Approved</span><span class="v" id="d-approved">—</span></div>
+  <div class="detail-row"><span class="k">Expires</span><span class="v" id="d-expire">—</span></div>
+  <div class="detail-row"><span class="k">Owner</span><span class="v" id="d-owner">—</span></div>
+  <div class="detail-row"><span class="k">Owner type</span><span class="v" id="d-owner-type">—</span></div>
+  <div class="detail-row"><span class="k">Mailing = Situs</span><span class="v" id="d-msmatch">—</span></div>
+  <div class="detail-row"><span class="k">Parcel</span><span class="v" id="d-parcel">—</span></div>
+  <div class="detail-row"><span class="k">Sale</span><span class="v" id="d-sale">—</span></div>
+  <div class="detail-row"><span class="k">Contractor</span><span class="v" id="d-contractor">—</span></div>
+  <div class="detail-row"><span class="k">License</span><span class="v" id="d-license">—</span></div>
+  <div class="detail-row"><span class="k">Contractor src</span><span class="v" id="d-contractor-src">—</span></div>
+  <div class="detail-row"><span class="k">System</span><span class="v" id="d-system">—</span></div>
+  <div class="detail-row"><span class="k">Battery</span><span class="v" id="d-battery">—</span></div>
+  <div class="detail-row"><span class="k">Apple Sat</span><span class="v" id="d-apple">—</span></div>
+  <div class="detail-row"><span class="k">Google Sat</span><span class="v" id="d-google">—</span></div>
+  <div class="detail-row"><span class="k">Sat status</span><span class="v" id="d-sat">—</span></div>
+  <div class="desc-box">Permit Description (verbatim)</div>
+  <div class="desc-content" id="d-description">—</div>
+  <div id="d-mh-box"></div>
+  <div class="why-box">
+    <span class="label">Why a lead / Outreach angle</span>
+    <span id="d-why">—</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr;gap:6px;margin-top:10px">
+    <a id="d-gsat" target="_blank" style="background:#065f46;color:#fff;border-radius:10px;padding:9px 4px;font-size:12px;font-weight:700;text-align:center;text-decoration:none">🛰 Google Satellite</a>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+    <a id="d-assessor" target="_blank" style="background:#92400e;color:#fff;border-radius:10px;padding:9px 4px;font-size:12px;font-weight:700;text-align:center;text-decoration:none">👤 Assessor</a>
+    <a id="d-phone" target="_blank" style="background:#7c3aed;color:#fff;border-radius:10px;padding:9px 4px;font-size:12px;font-weight:700;text-align:center;text-decoration:none">📞 Phone</a>
+  </div>
+  <div class="notes-wrap">
+    <label>Notes</label>
+    <textarea id="d-notes" placeholder="Notes from door conversation…"></textarea>
+  </div>
+  <div class="outcomes">
+    <button class="obtn" data-outcome="apptset">Appt Set</button>
+    <button class="obtn" data-outcome="notint">Not Interested</button>
+    <button class="obtn" data-outcome="hassolar">Has Solar</button>
+    <button class="obtn" data-outcome="renter">Renter</button>
+    <button class="obtn" data-outcome="nih">Nobody Home</button>
+    <button class="obtn" data-outcome="called">Called</button>
+    <button class="obtn" data-outcome="notmoved">Not Moved In</button>
+    <button class="obtn" data-outcome="soldu">SOLD 🎉</button>
+  </div>
+  <button class="save-btn" onclick="saveLocal()">💾 Save Notes</button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const TERRITORY = { name:'Kingman / Golden Valley / Mohave', center:[35.28, -114.06], zoom:11 };
+const LS_KEY = 'srusa-kingman-permit-state-v2';
+
+const PERMITS = [
+ {
+  "id": "BLD-2026-03073",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p2a",
+  "address": "20438 E Panther Trl",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.206629560477,
+  "lng": -113.387952622363,
+  "parcel": "352-17-023",
+  "owner": "FALKERSON DANIEL J & DENISE I",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2014-11-01 / $150,000",
+  "status": "In Review",
+  "statusLabel": "Awaiting Completeness Review · submitted 10/20/2026",
+  "issued": null,
+  "approved": null,
+  "expire": "4/18/2027",
+  "submittedDate": "10/20/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "Whole home solar power system",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Just applied — still in county review, nothing installed yet. 40-acre property far east of town (Hualapai Mtn area), ~25 mi from central Kingman. Filed today.",
+  "angle": "\"Saw you just applied for solar — before anything's installed, want a free side-by-side on the price?\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-02640",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p4",
+  "address": "4068 E Buckskin Ln",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.147952841812,
+  "lng": -113.965439432623,
+  "parcel": "206-27-008G",
+  "owner": "MIKOLAJCZAK GREGORY & PATRICIA",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2018-03-27 / $370,000",
+  "status": "Issued",
+  "statusLabel": "Issued · 40 days",
+  "issued": "9/10/2026",
+  "approved": "9/10/2026",
+  "expire": "3/10/2027",
+  "submittedDate": "9/3/2026",
+  "contractor": "FIRST ELECTRIC",
+  "license": "340034",
+  "contractorSrc": "pdf-visual",
+  "contractorAuditNote": null,
+  "systemKW": null,
+  "systemDetail": "17 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Battery",
+  "description": "***ONLINE*** ROOF MOUNT SOLAR - Installation of 17 roof mounted solar panels and 3 backup batteries on SFR.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 40 days ago — install may not have started yet.",
+  "angle": "\"Saw your solar permit just got issued — before they start, want a quick second look at the numbers?\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-00926",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "7319 E Winchester Dr",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.421102,
+  "lng": -113.857816,
+  "parcel": "333-13-681",
+  "owner": "KRAUSE GARY J & JENNIFER J",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2023-10-01 / $825,000",
+  "status": "Expired",
+  "statusLabel": "Expired 10/6/2026 · never finaled",
+  "issued": "4/6/2026",
+  "approved": "4/6/2026",
+  "expire": "10/6/2026",
+  "submittedDate": "3/24/2026",
+  "contractor": "OUR WORLD ENERGY",
+  "license": "326134",
+  "contractorSrc": "pdf-text",
+  "contractorAuditNote": null,
+  "systemKW": "9.020 kW",
+  "systemDetail": "22 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 22 MODULES - ROOF MOUNTED - 9.020 kW DC, 7.600 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "undeveloped lots visible (new construction or older imagery) (checked May 8)",
+  "googleSat": "verify (dark patterns on roof — possible panels OR new shingles, dev-wide) (checked May 8)",
+  "satStatus": "verify",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home. Was an Angle Homes spec house in May; KRAUSE bought it since. They mail to Meadview — could be a rental or second home.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false
+ },
+ {
+  "id": "BLD-2025-03393",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p1",
+  "address": "5644 E Wagon Wheel Way",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.148787,
+  "lng": -113.910885,
+  "parcel": "204-41-019",
+  "owner": "MCLENDON CHARLES R III & TERRIE L",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2021-08-01 / $499,900",
+  "status": "Issued",
+  "statusLabel": "Issued · 314 days",
+  "issued": "12/10/2025",
+  "approved": "12/9/2025",
+  "expire": "11/27/2026",
+  "submittedDate": "11/26/2025",
+  "contractor": "ARK ELECTRIC LLC",
+  "license": "348887",
+  "contractorSrc": "pdf-text",
+  "contractorAuditNote": null,
+  "systemKW": "12.9 kW",
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "**ONLINE** ROOF MOUNTED SOLAR To provide 12.9 KW PV solar power at residence at 5644 E Wagon Wheel Way, Kingman, AZ 86401",
+  "appleSat": "clear (Hualapai Mtn area, tan/brown shingle roofs visible) (checked May 8)",
+  "googleSat": "—",
+  "satStatus": "clear",
+  "satConflict": false,
+  "why": "Issued 314 days ago and still not finaled — install stalled.",
+  "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
+  "isNew": false
+ },
+ {
+  "id": "BLD-2025-02309",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "4248 E Cane Ranch Rd",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.26801576563,
+  "lng": -113.967601645123,
+  "parcel": "310-34-020",
+  "owner": "HOANG THAO & PHAM PETE PHUNGOC",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2025-04-01 / $400,000",
+  "status": "Expired",
+  "statusLabel": "Expired 4/2/2026 · never finaled",
+  "issued": "9/15/2025",
+  "approved": "9/15/2025",
+  "expire": "4/2/2026",
+  "submittedDate": "8/18/2025",
+  "contractor": "T & K ELECTRIC COMPANY LLC",
+  "license": "319779",
+  "contractorSrc": "pdf-text",
+  "contractorAuditNote": null,
+  "systemKW": "11.34 kW",
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "**ONLINE** Installation of a 11.34 kW Roof Mounted PV system with a 175A Derate",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2025-01221",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p1",
+  "address": "4354 N Lookout Canyon Rd",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.249391,
+  "lng": -113.40291,
+  "parcel": "352-31-013",
+  "owner": "CROCKETT JOSHUA R D & ROBIE LYN",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2022-07-01 / $30,000",
+  "status": "Issued",
+  "statusLabel": "Issued · 484 days",
+  "issued": "6/23/2025",
+  "approved": "7/10/2025",
+  "expire": "2/19/2027",
+  "submittedDate": "5/6/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "Permit Residential Solar",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 484 days ago and still not finaled — install stalled. Owner's mail goes to another address — may be a rental or second home. Vacant 41-acre parcel, no street address on county record — ground mount / off-grid build.",
+  "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-03039",
+  "bucket": "builder",
+  "zip": "86409",
+  "pBucket": "p2a",
+  "address": "2771 E Hermosa Vista",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": "",
+  "lng": "",
+  "parcel": "310-48-053",
+  "owner": "ANGLE HOMES INC",
+  "ownerType": "Builder",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2026-07-01 / $354,000",
+  "status": "In Review",
+  "statusLabel": "Routed for Review · submitted 10/15/2026",
+  "issued": null,
+  "approved": null,
+  "expire": "4/13/2027",
+  "submittedDate": "10/15/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "6 kW",
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "*ONLINE* 6kW Rooftop Solar",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Just applied — still in county review, nothing installed yet. Owner's mail goes to another address — may be a rental or second home. House sold since May (2026-07-01 / $354,000) — new owner may not know about the permit.",
+  "angle": "\"Saw you just applied for solar — before anything's installed, want a free side-by-side on the price?\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-02235",
+  "bucket": "bcverify",
+  "zip": "86409",
+  "pBucket": "p2a",
+  "address": "8780 N Avenida Ramirez",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.377551317406,
+  "lng": -114.033228590582,
+  "parcel": "331-16-006F",
+  "owner": "CARLBLOM JERALD A & PATRICIA L  CPWRS",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2023-12-01 / $269,000",
+  "status": "In Review",
+  "statusLabel": "Resubmittal Required · submitted 7/22/2026",
+  "issued": null,
+  "approved": null,
+  "expire": "1/18/2027",
+  "submittedDate": "7/22/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "8.0 kW",
+  "systemDetail": "16 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Battery",
+  "description": "**ONLINE**SOLAR GROUND MOUNT - (16) 500 W PANELS, INVERTER AND BATTERIES",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Just applied — still in county review, nothing installed yet. Owner's mail goes to another address — may be a rental or second home. County sent a deficiency notice 8/7/2026; owner hasn't resubmitted. Owner mails to Apple Valley, CA.",
+  "angle": "\"Saw you just applied for solar — before anything's installed, want a free side-by-side on the price?\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-01527",
+  "bucket": "bckeep",
+  "zip": "86409",
+  "pBucket": "p2b",
+  "address": "3588 E Lark Ln",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.245255712496,
+  "lng": -113.990839492903,
+  "parcel": "324-02-358",
+  "owner": "CANNON SUSAN E",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2012-06-01 / $45,000",
+  "status": "Ready To Issue",
+  "statusLabel": "Ready To Issue · approved 5/27/2026, 146 days waiting",
+  "issued": null,
+  "approved": "5/27/2026",
+  "expire": "11/23/2026",
+  "submittedDate": "5/15/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "6.150 kW",
+  "systemDetail": "15 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 15 MODULES - ROOF MOUNTED - 6.150 kW DC, 11.500 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Approved but the contractor never picked up the permit.",
+  "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-01282",
+  "bucket": "bckeep",
+  "zip": "86409",
+  "pBucket": "p2b",
+  "address": "6138 N Sundown Cir",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.300467,
+  "lng": -114.052969,
+  "parcel": "330-12-122",
+  "owner": "WALKUP WAYNE & DIANA",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2013-02-01 / $149,500",
+  "status": "Ready To Issue",
+  "statusLabel": "Ready To Issue · approved 5/12/2026, 161 days waiting",
+  "issued": null,
+  "approved": "5/12/2026",
+  "expire": "11/8/2026",
+  "submittedDate": "4/23/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "6.560 kW",
+  "systemDetail": "16 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 16 MODULES - ROOF MOUNTED - 6.560 kW DC, 11.500 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "n/a",
+  "satConflict": false,
+  "why": "Approved but the contractor never picked up the permit.",
+  "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
+  "isNew": false
+ },
+ {
+  "id": "BLD-2026-00889",
+  "bucket": "bcverify",
+  "zip": "86409",
+  "pBucket": "p5",
+  "address": "4790 N Anthony Ave",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.26242854955,
+  "lng": -113.985436175803,
+  "parcel": "324-48-046",
+  "owner": "FIGGINS WILMA F FIGGINS DONALD R",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2025-12-01 / $279,900",
+  "status": "Expired",
+  "statusLabel": "Expired 10/6/2026 · never finaled",
+  "issued": "4/6/2026",
+  "approved": "4/6/2026",
+  "expire": "10/6/2026",
+  "submittedDate": "3/20/2026",
+  "contractor": "OUR WORLD ENERGY",
+  "license": "326134",
+  "contractorSrc": "pdf-text",
+  "contractorAuditNote": null,
+  "systemKW": "4.100 kW",
+  "systemDetail": "10 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE** - SOLAR - INSTALLATION OF A 10 MODULES - ROOF MOUNTED - 4.100 kW DC, 3.800 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out. Permit lists SMITH DAVID L & KIMBERLY B but the county shows FIGGINS bought it 12/2025 — ask for the Figgins.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2025-03520",
+  "bucket": "bcverify",
+  "zip": "86409",
+  "pBucket": "p5",
+  "address": "9203 N Bank St",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.390446,
+  "lng": -114.013716,
+  "parcel": "331-06-069F",
+  "owner": "THE BLACKNER FAMILY TRUST DTD FEBRUARY 25 2026",
+  "ownerType": "Trust",
+  "mh": true,
+  "trust": true,
+  "msMatch": false,
+  "sale": null,
+  "status": "Expired",
+  "statusLabel": "Expired 7/6/2026 · never finaled",
+  "issued": "1/6/2026",
+  "approved": "12/29/2025",
+  "expire": "7/6/2026",
+  "submittedDate": "12/10/2025",
+  "contractor": "OUR WORLD ENERGY",
+  "license": "326134",
+  "contractorSrc": "pdf-text",
+  "contractorAuditNote": null,
+  "systemKW": "8.910 kW",
+  "systemDetail": "22 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 22 MODULES - ROOF MOUNTED - 8.910 kW DC, 11.500 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "property at edge of view (checked May 8)",
+  "googleSat": "clear (light/silver metal roof, MH) (checked May 8)",
+  "satStatus": "clear",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home. Owner now mails to a Stockton Hill Rd mailbox store; may still live here.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2025-03647",
+  "bucket": "bcverify",
+  "zip": "86409",
+  "pBucket": "p5",
+  "address": "1025 E Edie Cir",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.26748,
+  "lng": -114.041194,
+  "parcel": "330-21-065",
+  "owner": "PENWARDEN DONNA L (county record currently blank)",
+  "ownerType": "Individual",
+  "mh": true,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2013-03-01 / $37,000",
+  "status": "Expired",
+  "statusLabel": "Expired 6/29/2026 · never finaled",
+  "issued": null,
+  "approved": "12/31/2025",
+  "expire": "6/29/2026",
+  "submittedDate": "12/23/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "5.265 kW",
+  "systemDetail": "13 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 13 MODULES - ROOF MOUNTED - 5.265 kW DC, 11.500 kW AC WITH 200A MPU AND TESLA POWERWALL 3 BATTERY",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "n/a",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2026-02731",
+  "bucket": "builder",
+  "zip": "86413",
+  "pBucket": "p3",
+  "address": "3689 N Verde Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.233968775894,
+  "lng": -114.218564019202,
+  "parcel": "306-04-208D",
+  "owner": "ANGLE HOMES INC",
+  "ownerType": "Builder",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2026-01-01 / $33,000",
+  "status": "Issued",
+  "statusLabel": "Issued · 18 days",
+  "issued": "10/2/2026",
+  "approved": "9/28/2026",
+  "expire": "4/2/2027",
+  "submittedDate": "9/15/2026",
+  "contractor": "MOHAVE SOLAR LLC DBA ANGLE SOLAR",
+  "license": "276972",
+  "contractorSrc": "pdf-visual",
+  "contractorAuditNote": null,
+  "systemKW": "6 kW",
+  "systemDetail": "16 × 500 W panels, ground mount",
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "**ONLINE**6kW Rooftop Solar",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 18 days ago — brand new. Owner's mail goes to another address — may be a rental or second home.",
+  "angle": "\"Saw your solar permit just got issued — before they start, want a quick second look at the numbers?\"",
+  "isNew": true
+ },
+ {
+  "id": "BLD-2026-01262",
+  "bucket": "bckeep",
+  "zip": "86413",
+  "pBucket": "p2b",
+  "address": "3171 S Morgan Dr",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.136282,
+  "lng": -114.118088,
+  "parcel": "206-26-026",
+  "owner": "GODE JERRY D",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2022-08-01 / $350,000",
+  "status": "Ready To Issue",
+  "statusLabel": "Ready To Issue · approved 5/12/2026, 161 days waiting",
+  "issued": null,
+  "approved": "5/12/2026",
+  "expire": "11/8/2026",
+  "submittedDate": "4/22/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "4.100 kW",
+  "systemDetail": "10 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 10 MODULES - ROOF MOUNTED - 4.100 kW DC, 11.500 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "n/a",
+  "satConflict": false,
+  "why": "Approved but the contractor never picked up the permit.",
+  "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
+  "isNew": false
+ },
+ {
+  "id": "BLD-2026-01305",
+  "bucket": "bckeep",
+  "zip": "86413",
+  "pBucket": "p2b",
+  "address": "561 S Santa Cruz Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.213257,
+  "lng": -114.22513,
+  "parcel": "306-56-014",
+  "owner": "THIBODEAUX MICHAEL W & CAROL A",
+  "ownerType": "Individual",
+  "mh": true,
+  "trust": false,
+  "msMatch": true,
+  "sale": null,
+  "status": "Ready To Issue",
+  "statusLabel": "Ready To Issue · approved 5/12/2026, 161 days waiting",
+  "issued": null,
+  "approved": "5/12/2026",
+  "expire": "11/8/2026",
+  "submittedDate": "4/24/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "4.920 kW",
+  "systemDetail": "12 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 12 MODULES - ROOF MOUNTED - 4.920 kW DC, 11.500 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "n/a",
+  "satConflict": false,
+  "why": "Approved but the contractor never picked up the permit.",
+  "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2026-00825",
+  "bucket": "bckeep",
+  "zip": "86413",
+  "pBucket": "p5",
+  "address": "530 S Santa Cruz Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.21283381,
+  "lng": -114.22437417,
+  "parcel": "306-56-008",
+  "owner": "THE VERDUZCO LIVING TRUST DTD APRIL 21 2026",
+  "ownerType": "Trust",
+  "mh": true,
+  "trust": true,
+  "msMatch": true,
+  "sale": "2024-05-01 / $243,000",
+  "status": "Expired",
+  "statusLabel": "Expired 9/30/2026 · never finaled",
+  "issued": "3/31/2026",
+  "approved": "3/30/2026",
+  "expire": "9/30/2026",
+  "submittedDate": "3/16/2026",
+  "contractor": "INDEPENDENT SOLAR",
+  "license": "344062",
+  "contractorSrc": "pdf-visual",
+  "contractorAuditNote": null,
+  "systemKW": "10.530 kW",
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Battery",
+  "description": "**ONLINE**10.530 kW DC Roof Mounted Solar + Battery",
+  "appleSat": "clear (silver MH metal roof, no panels) (checked May 8)",
+  "googleSat": "clear (low conf, gray uniform) (checked May 8)",
+  "satStatus": "clear",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2024-00053",
+  "bucket": "bcverify",
+  "zip": "86413",
+  "pBucket": "p5",
+  "address": "6861 N Stewart Mountain Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.326698,
+  "lng": -114.260941,
+  "parcel": "339-05-050",
+  "owner": "BERLIN RICHARD & JEANNIE JT",
+  "ownerType": "Individual",
+  "mh": true,
+  "trust": false,
+  "msMatch": false,
+  "sale": null,
+  "status": "Expired",
+  "statusLabel": "Expired 8/14/2024 · never finaled",
+  "issued": "2/16/2024",
+  "approved": "3/25/2026",
+  "expire": "8/14/2024",
+  "submittedDate": "1/8/2024",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "Permit Residential Solar",
+  "appleSat": "unavailable (checked May 8)",
+  "googleSat": "clear (rural single house, light roof) (checked May 8)",
+  "satStatus": "clear",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home. Expired back in Aug 2024 — oldest on the list.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2025-00406",
+  "bucket": "bcverify",
+  "zip": "86413",
+  "pBucket": "p5",
+  "address": "3810 N Santa Maria Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.237694,
+  "lng": -114.222194,
+  "parcel": "306-04-023A",
+  "owner": "EVANS THOMAS J GAGE ANGELA KRISTEEN",
+  "ownerType": "Individual",
+  "mh": true,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2019-03-01 / $139,000",
+  "status": "Expired",
+  "statusLabel": "Expired 7/8/2026 · never finaled",
+  "issued": "1/8/2026",
+  "approved": "7/10/2025",
+  "expire": "7/8/2026",
+  "submittedDate": "2/18/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "Permit Residential Solar",
+  "appleSat": "clear (MH brown shingle, no panels) (checked May 8)",
+  "googleSat": "—",
+  "satStatus": "clear",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2025-03101",
+  "bucket": "bcverify",
+  "zip": "86413",
+  "pBucket": "p5",
+  "address": "4704 W Burro Dr",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.236072,
+  "lng": -114.189939,
+  "parcel": "306-03-180A",
+  "owner": "HOLDEN JEFFERY S & MARIE L",
+  "ownerType": "Individual",
+  "mh": true,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2015-06-01 / $102,000",
+  "status": "Expired",
+  "statusLabel": "Expired 5/3/2026 · never finaled",
+  "issued": null,
+  "approved": "11/4/2025",
+  "expire": "5/3/2026",
+  "submittedDate": "10/28/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "6.480 kW",
+  "systemDetail": "16 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE**INSTALLATION OF A 16 MODULES - ROOF MOUNTED - 6.480 kW DC, 11.500 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "sparse (checked May 8)",
+  "googleSat": "verify (possible darker panel-shaped object near middle, ambiguous) (checked May 8)",
+  "satStatus": "verify",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false,
+  "mhEligibility": "Manufactured home per county record",
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+ },
+ {
+  "id": "BLD-2025-02725",
+  "bucket": "removed",
+  "zip": "86413",
+  "pBucket": "p5",
+  "address": "3647 N Laguna Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.233118,
+  "lng": -114.271884,
+  "parcel": "306-57-025",
+  "owner": "BURKLEO J L & PAULA A",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": null,
+  "status": "Expired",
+  "statusLabel": "Expired 5/3/2026 · never finaled",
+  "issued": "11/3/2025",
+  "approved": "10/23/2025",
+  "expire": "5/3/2026",
+  "submittedDate": "9/24/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "3.870 kW",
+  "systemDetail": "09 modules",
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE** INSTALLATION OF A 09 MODULES - ROOF MOUNTED - 3.870 kW DC, 3.141 kW AC WITH TESLA POWERWALL 3 BATTERY",
+  "appleSat": "PANELS VISIBLE (clear dark grid pattern on rooftop) (checked May 8)",
+  "googleSat": "unclear (subdivision view) (checked May 8)",
+  "satStatus": "installed-dropped",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false
+ },
+ {
+  "id": "BLD-2025-02697",
+  "bucket": "bcverify",
+  "zip": "86413",
+  "pBucket": "p5",
+  "address": "3671 N Neptune Rd",
+  "city": "Golden Valley",
+  "state": "AZ",
+  "lat": 35.233728,
+  "lng": -114.27335,
+  "parcel": "306-57-040",
+  "owner": "THE MARK J NASH LIVING TRUST FEB 3 2026",
+  "ownerType": "Trust",
+  "mh": false,
+  "trust": true,
+  "msMatch": true,
+  "sale": null,
+  "status": "Expired",
+  "statusLabel": "Expired 4/21/2026 · never finaled",
+  "issued": null,
+  "approved": "10/23/2025",
+  "expire": "4/21/2026",
+  "submittedDate": "9/22/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "not-verified",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "7.790 kW",
+  "systemDetail": "19 modules",
+  "systemSrc": "description-extract",
+  "battery": false,
+  "batteryModel": null,
+  "description": "**ONLINE** INSTALLATION OF A 19 MODULES - ROOF MOUNTED - 7.790 kW DC, 5.760 kW AC",
+  "appleSat": "clear (no panels at center) (checked May 8)",
+  "googleSat": "—",
+  "satStatus": "clear",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": false
+ },
+ {
+  "id": "BLD-2025-02185",
+  "bucket": "ryan",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "5803 N Bull Mountain Dr",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.294863930698,
+  "lng": -114.057753180772,
+  "parcel": "330-34-012",
+  "owner": "HAMMOND TERRI LYN",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2019-05-01 / $513,000",
+  "status": "Expired",
+  "statusLabel": "Expired 4/1/2026 · never finaled",
+  "issued": null,
+  "approved": "10/3/2025",
+  "expire": "4/1/2026",
+  "submittedDate": "8/7/2025",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "not on permit record",
+  "systemKW": "12.96 kW",
+  "systemDetail": null,
+  "systemSrc": "description-extract",
+  "battery": true,
+  "batteryModel": "Tesla Powerwall 3",
+  "description": "**ONLINE** Installation of a 12.96kW Ground mounted PV system with 2 Tesla Powerwall 3 batteries. Also a 400A MPU",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true
+ }
+];
+
+const BUCKET_LABELS = {
+  bckeep:  {label:'✅ Keep / Actionable', class:'bb-bckeep'},
+  bcverify:{label:'⚠️ Verify First', class:'bb-bcverify'},
+  ryan:    {label:'🟣 Ryan Ref', class:'bb-ryan'},
+  builder: {label:'🏗 Builder Watch', class:'bb-builder'},
+  removed: {label:'❌ Likely Installed', class:'bb-removed'},
+  closed:  {label:'⚫ Closed Exclusion', class:'bb-closed'}
+};
+// Visible labels for saved outcome badges. data-outcome value (saved in localStorage) stays unchanged.
+const OUTCOME_LABELS = {
+  apptset:  'Appt Set',
+  notint:   'Not Interested',
+  hassolar: 'Has Solar',
+  renter:   'Renter',
+  nih:      'Nobody Home',
+  called:   'Called',
+  notmoved: 'Not Moved In',
+  soldu:    'Sold / Moved'
+};
+function outcomeLabel(o) { return OUTCOME_LABELS[o] || (o ? o.toUpperCase() : ''); }
+
+let currentFilter = 'all';
+let currentPermit = null;
+let markers = [];
+let map = null;
+let view = 'map';
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { outcomes: {}, notes: {} };
+}
+function saveState() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {} }
+
+function parseMDY(s) {
+  if (!s) return null;
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (!m) return null;
+  return new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2])).getTime();
+}
+// Newest First sort key — primary: real Submitted date captured from SmartGov detail page.
+// Fallback: permit-ID year + seq mapped to a synthetic date (~11 permits/day issuance rate observed).
+// Both produce comparable timestamps so real and fallback can be sorted together.
+function submissionDateMs(p) {
+  if (p.submittedDate) {
+    const m = p.submittedDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2])).getTime();
+  }
+  // Fallback: permit ID year + seq → estimated submission date
+  const m = (p.id || '').match(/^BLD-(\d{4})-(\d{1,6})/);
+  if (!m) return 0;
+  const year = parseInt(m[1]);
+  const seq = parseInt(m[2]);
+  const dayOfYear = Math.min(365, Math.floor(seq / 11));
+  return new Date(year, 0, 1 + dayOfYear).getTime();
+}
+// Back-compat alias
+function submissionRankFromId(id) {
+  return submissionDateMs({id});
+}
+// Back-compat alias kept in case any caller still references sortDateMs
+function sortDateMs(p) { return submissionRankFromId(p.id); }
+
+function fmtDate(s) {
+  if (!s) return '—';
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return s;
+  const m2 = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m2) return `${m2[2]}/${m2[3]}/${m2[1]}`;
+  return s;
+}
+
+function initMap() {
+  map = L.map('map', { tap: true, zoomControl: true }).setView(TERRITORY.center, TERRITORY.zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19, attribution:'© OpenStreetMap' }).addTo(map);
+  renderPins();
+}
+
+function pinIcon(p) {
+  const cls = `pin ${p.bucket}`;
+  const labels = {bckeep:'✓', bcverify:'?', ryan:'R', builder:'B', removed:'✗', closed:'C'};
+  return L.divIcon({ html:`<div class="${cls}"><div class="pin-inner">${labels[p.bucket]||''}</div></div>`, iconSize:[26,26], iconAnchor:[13,26], className:'' });
+}
+
+function renderPins() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  const filtered = filterPermits().filter(p => p.lat && p.lng);
+  filtered.forEach(p => {
+    const m = L.marker([p.lat, p.lng], { icon: pinIcon(p) }).addTo(map);
+    m.on('click', () => openDetail(p));
+    markers.push(m);
+  });
+}
+
+// Outcomes that DISPOSITION a card (hide it from active working views).
+// apptset / called / nih / notmoved are still-active outcomes — record stays visible.
+const DEAD_OUTCOMES = ['notint','hassolar','renter','soldu'];
+function isDispositioned(p) { return DEAD_OUTCOMES.includes(state.outcomes[p.id]); }
+// Active working views hide dispositioned cards. Decision/audit views show everything.
+const ACTIVE_WORKING_VIEWS = ['all','p1','p2a','p2b','p3','p4','p5','86409','86413','unknocked','newest','mh'];
+
+function filterPermits() {
+  const f = PERMITS.slice();
+  // Active working list = Blake Core only (Keep + Verify First). Excludes Ryan Ref/Builder/Removed/Closed.
+  let active = f.filter(p => p.bucket === 'bckeep' || p.bucket === 'bcverify');
+  // Hide dispositioned cards from active working views (notint / hassolar / renter / soldu).
+  if (ACTIVE_WORKING_VIEWS.includes(currentFilter)) {
+    active = active.filter(p => !isDispositioned(p));
+  }
+  switch (currentFilter) {
+    case 'all':       return active;
+    case 'audit':     return f;
+    case 'p1':        return active.filter(p => p.pBucket === 'p1');
+    case 'p2a':       return active.filter(p => p.pBucket === 'p2a');
+    case 'p2b':       return active.filter(p => p.pBucket === 'p2b');
+    case 'p3':        return active.filter(p => p.pBucket === 'p3');
+    case 'p4':        return active.filter(p => p.pBucket === 'p4');
+    case 'p5':        return active.filter(p => p.pBucket === 'p5');
+    case '86409':     return active.filter(p => p.zip === '86409');
+    case '86413':     return active.filter(p => p.zip === '86413');
+    case 'ryan':      return f.filter(p => p.bucket === 'ryan');
+    case 'unknocked': return active.filter(p => !state.outcomes[p.id]);
+    case 'bckeep':    return f.filter(p => p.bucket === 'bckeep');
+    case 'bcverify':  return f.filter(p => p.bucket === 'bcverify');
+    case 'builder':   return f.filter(p => p.bucket === 'builder');
+    case 'removed':   return f.filter(p => p.bucket === 'removed');
+    case 'closed':    return f.filter(p => p.bucket === 'closed');
+    case 'mh':        return f.filter(p => p.mh && !isDispositioned(p));
+    case 'newest':    return active.slice().sort((a,b) => submissionDateMs(b) - submissionDateMs(a));
+    default:          return active;
+  }
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.fchip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  document.querySelectorAll('.fchip-sm').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  document.querySelectorAll('.stat').forEach(s => s.classList.toggle('active', s.dataset.filter === f));
+  // Newest First auto-switches to list view (date-ordered, not map-ordered)
+  if (f === 'newest' && view !== 'list') {
+    switchView('list');
+    return;
+  }
+  renderPins();
+  if (view === 'list') renderList();
+}
+
+function switchView(v) {
+  view = v;
+  document.getElementById('vbtn-map').classList.toggle('active', v==='map');
+  document.getElementById('vbtn-list').classList.toggle('active', v==='list');
+  document.getElementById('map').style.display = (v==='map' ? 'block' : 'none');
+  document.getElementById('list-view').style.display = (v==='list' ? 'block' : 'none');
+  if (v==='list') renderList();
+  else if (map) setTimeout(() => map.invalidateSize(), 50);
+}
+
+function renderList() {
+  const lv = document.getElementById('list-view');
+  const filtered = filterPermits();
+  // Sort: bucket order, then urgent first, then by date
+  const pOrder = { p1:1, p2a:2, p2b:3, p3:4, p4:5, p5:6 };
+  const bOrder = { bckeep:1, bcverify:2, ryan:3, builder:4, removed:5, closed:6 };
+  // Newest First: pure date-desc sort, no grouping
+  const newestMode = currentFilter === 'newest';
+  // For active-style filters, group by P-bucket. For decision filters, group by bucket.
+  const groupByP = !newestMode && ['all','unknocked','86409','86413','mh'].includes(currentFilter);
+  if (newestMode) {
+    filtered.sort((a,b) => submissionDateMs(b) - submissionDateMs(a));
+  } else {
+    filtered.sort((a,b) => {
+      if (groupByP) {
+        const pa = pOrder[a.pBucket] || 99;
+        const pb = pOrder[b.pBucket] || 99;
+        if (pa !== pb) return pa - pb;
+      }
+      return (bOrder[a.bucket]-bOrder[b.bucket]) || (b.urgent?1:0) - (a.urgent?1:0);
+    });
+  }
+  if (!filtered.length) { lv.innerHTML = '<div class="empty-list">No permits match this filter.</div>'; return; }
+  // Group by bucket with section banners
+  let html = '';
+  let lastBucket = null;
+  let lastP = null;
+  const P_LABELS = {
+    p1: '🔥 P1 Stalled (Issued ≥61 days)',
+    p2a: '🆕 P2A Fresh Applied (Tech Complete)',
+    p2b: '🟠 P2B Stalled Pre-Issuance (RTI)',
+    p3: '⚡ P3 Recent Issued (≤30 days)',
+    p4: '⚠️ P4 Verify (Issued 31-60 days)',
+    p5: '💀 P5 Expired'
+  };
+  if (newestMode) {
+    html += `<div class="section-banner">🆕 Newest First — Blake Core active leads, real Submitted dates from SmartGov (fallback to permit ID for un-captured)</div>`;
+  }
+  filtered.forEach(p => {
+    if (newestMode) {
+      // No per-record banners in newest mode
+    } else if (groupByP && p.pBucket && p.pBucket !== lastP) {
+      html += `<div class="section-banner">${P_LABELS[p.pBucket] || p.pBucket}</div>`;
+      lastP = p.pBucket;
+      lastBucket = null;
+    } else if (!groupByP && p.bucket !== lastBucket) {
+      const lbl = BUCKET_LABELS[p.bucket];
+      html += `<div class="section-banner">${lbl.label}</div>`;
+      lastBucket = p.bucket;
+    }
+    const badge = BUCKET_LABELS[p.bucket];
+    const sysClass = p.systemKW ? (p.contractorSrc==='pdf-visual'||p.contractorSrc==='pdf-text' ? '' : 'unverified') : 'unknown';
+    const sysDetail = p.systemKW ? `${p.systemKW}${p.systemDetail ? ' · ' + p.systemDetail : ''}${p.battery ? ' · ' + (p.batteryModel || 'Battery') : ''}` : 'System: pending verification';
+    const isVerified = p.contractorSrc === 'pdf-visual' || p.contractorSrc === 'pdf-text';
+    const contractor = (isVerified && p.contractor)
+      ? `🔧 ${p.contractor}${p.license ? ' · #' + p.license : ''} <span style="color:#4ade80;font-weight:700;font-size:9px;letter-spacing:0.5px;text-transform:uppercase">· PDF visual verified</span>`
+      : '🔧 Contractor: not currently verified';
+    const contractorAudit = (!isVerified && p.contractorAuditNote)
+      ? `<div style="font-size:9px;color:#64748b;font-style:italic;margin-top:3px;padding-top:3px;border-top:1px dashed #2a3040">Audit: ${p.contractorAuditNote}</div>`
+      : '';
+    const dateLabel = p.issued ? `Issued ${fmtDate(p.issued)}` : (p.approved ? `Approved ${fmtDate(p.approved)}` : `Expires ${fmtDate(p.expire)}`);
+    const outcome = state.outcomes[p.id] || '';
+    const tags = [`<span class="bucket-badge ${badge.class}">${badge.label}</span>`];
+    if (p.urgent) tags.push('<span class="bucket-badge bb-urgent">⏰ URGENT</span>');
+    if (p.mh) tags.push('<span class="bucket-badge bb-mh">🏠 MH</span>');
+    if (p.trust) tags.push('<span class="bucket-badge bb-trust">📜 Trust</span>');
+    if (p.isNew) tags.push('<span class="bucket-badge bb-urgent">🆕 NEW</span>');
+    if (outcome) tags.push(`<span class="bucket-badge bb-bckeep">✓ ${outcomeLabel(outcome)}</span>`);
+    const mhBox = p.mh ? `<div class="lcard-mh"><strong>🏠 MH:</strong> ${p.mhEligibility || 'eligibility pending'} — ${p.mhEligibilityNote || ''}</div>` : '';
+    html += `
+      <div class="lcard ${p.bucket}" onclick="openDetail(PERMITS.find(x=>x.id==='${p.id}'))">
+        <div class="lcard-header">
+          <span class="lcard-id">${p.id}</span>
+          <span class="lcard-status ${badge.class}">${p.statusLabel}</span>
+        </div>
+        <div class="lcard-body">
+          <div class="lcard-addr">
+            <span class="addr-text">${p.address}</span>
+            ${(p.lat && p.lng) ? `<a class="lcard-roof-btn" href="https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${p.lat},${p.lng}&t=k&spn=0.00015,0.00015&z=21" onclick="event.stopPropagation()">🏠 View Roof</a>` : ''}
+            <a class="lcard-dir-btn" href="maps:?daddr=${encodeURIComponent(p.address+', '+p.city+' '+p.state)}" onclick="event.stopPropagation()">🚗 Get Directions</a>
+          </div>
+          <div class="lcard-zip">${p.city}, ${p.state} ${p.zip} · Parcel ${p.parcel || '—'}${p.sale ? ' · Sale ' + p.sale : ''}</div>
+          <div class="lcard-tags">${tags.join('')}</div>
+          <div class="lcard-info-row">
+            <div class="lcard-info-cell"><div class="lci-label">Owner</div><div class="lci-value">${p.owner || '—'}</div></div>
+            <div class="lcard-info-cell"><div class="lci-label">${dateLabel.split(' ')[0]}</div><div class="lci-value">${dateLabel.replace(/^\\w+\\s+/, '')}</div></div>
+          </div>
+          ${mhBox}
+          <div class="lcard-system ${sysClass}">
+            <div class="lcard-system-detail">${sysDetail}</div>
+            <div class="lcard-system-contractor">${contractor}</div>
+            ${contractorAudit}
+          </div>
+          ${p.description ? `<div class="lcard-desc">${p.description}</div>` : ''}
+          <div class="lcard-why"><strong>Why:</strong> ${p.why}</div>
+          ${(p.lat&&p.lng) ? `<div class="lcard-btns">
+            <a class="lcard-nav-btn" href="https://maps.google.com/maps?q=${encodeURIComponent(p.address+' '+p.city+' '+p.state)}&t=k&z=20" target="_blank" onclick="event.stopPropagation()">🛰 Google</a>
+            <a class="lcard-nav-btn" href="https://appsweb.mohave.gov/data_apps/assessor_parcel_search?searchTerm=${encodeURIComponent(p.parcel||'')}" target="_blank" onclick="event.stopPropagation()">👤 Asr</a>
+            <a class="lcard-nav-btn" href="https://www.truepeoplesearch.com/results?streetaddress=${encodeURIComponent(p.address)}&citystatezip=${encodeURIComponent(p.city+' '+p.state+' '+p.zip)}" target="_blank" onclick="event.stopPropagation()">📞 Phone</a>
+          </div>` : ''}
+        </div>
+      </div>`;
+  });
+  lv.innerHTML = html;
+}
+
+function openDetail(p) {
+  currentPermit = p;
+  const $ = id => document.getElementById(id);
+  const badge = BUCKET_LABELS[p.bucket];
+  $('d-addr').textContent = p.address;
+  $('d-meta').textContent = `${p.city}, ${p.state} ${p.zip}${p.parcel ? ' · Parcel ' + p.parcel : ''}`;
+  // Wire the View Roof button to Apple Maps satellite view at the parcel centroid (or address fallback).
+  const roofBtn = $('d-roof-btn');
+  if (roofBtn) {
+    if (p.lat && p.lng) {
+      // Universal Apple Maps link with explicit ll= center, q= pin at the same coords (forces exact pin placement),
+      // t=k for satellite, spn=0.00015 (~15m square) AND z=21 — both passed because spn is the documented param
+      // but z is what most macOS Apple Maps versions actually honor. This pins the view tight on a single roof.
+      roofBtn.href = `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${p.lat},${p.lng}&t=k&spn=0.00015,0.00015&z=21`;
+      roofBtn.style.display = '';
+    } else if (p.address) {
+      roofBtn.href = `https://maps.apple.com/?q=${encodeURIComponent(p.address + ', ' + p.city + ', ' + p.state)}&t=k&spn=0.00015,0.00015&z=21`;
+      roofBtn.style.display = '';
+    } else {
+      roofBtn.style.display = 'none';
+    }
+  }
+  // Wire the Get Directions button to Apple Maps with daddr= for turn-by-turn directions.
+  const dirBtn = $('d-dir-btn');
+  if (dirBtn) {
+    if (p.address) {
+      dirBtn.href = `maps:?daddr=${encodeURIComponent(p.address + ', ' + p.city + ' ' + p.state)}`;
+      dirBtn.style.display = '';
+    } else {
+      dirBtn.style.display = 'none';
+    }
+  }
+  let badges = `<span class="bucket-badge ${badge.class}">${badge.label}</span>`;
+  if (p.urgent) badges += `<span class="bucket-badge bb-urgent">⏰ URGENT</span>`;
+  if (p.mh) badges += `<span class="bucket-badge bb-mh">🏠 MH</span>`;
+  if (p.trust) badges += `<span class="bucket-badge bb-trust">📜 Trust</span>`;
+  if (p.isNew) badges += `<span class="bucket-badge bb-urgent">🆕 NEW since May</span>`;
+  $('d-badges').innerHTML = badges;
+  $('d-status').textContent = p.statusLabel;
+  $('d-issued').textContent = fmtDate(p.issued);
+  $('d-approved').textContent = fmtDate(p.approved);
+  $('d-expire').textContent = fmtDate(p.expire);
+  if (p.urgent) $('d-expire').className = 'v warn';
+  $('d-owner').textContent = p.owner || '—';
+  $('d-owner-type').textContent = p.ownerType || '—';
+  $('d-msmatch').textContent = p.msMatch===true?'Yes':(p.msMatch===false?'No (non-occupant)':'—');
+  $('d-parcel').textContent = p.parcel || '—';
+  $('d-sale').textContent = p.sale || '—';
+  const isVerifiedDetail = p.contractorSrc === 'pdf-visual' || p.contractorSrc === 'pdf-text';
+  if (isVerifiedDetail && p.contractor) {
+    $('d-contractor').textContent = p.contractor + ' — PDF visual verified';
+    $('d-contractor').className = 'v battery-yes';
+  } else {
+    $('d-contractor').textContent = 'Not currently verified';
+    $('d-contractor').className = 'v unknown';
+  }
+  $('d-license').textContent = (isVerifiedDetail && p.license) ? '#' + p.license : '—';
+  $('d-contractor-src').textContent = isVerifiedDetail ? 'PDF visual' : (p.contractorAuditNote ? p.contractorAuditNote : 'not currently verified');
+  $('d-system').textContent = p.systemKW ? `${p.systemKW}${p.systemDetail ? ' · ' + p.systemDetail : ''}` : 'not available';
+  $('d-system').className = p.systemKW ? 'v' : 'v unknown';
+  if (p.battery === true) { $('d-battery').textContent = 'Yes' + (p.batteryModel ? ' — ' + p.batteryModel : ''); $('d-battery').className = 'v battery-yes'; }
+  else if (p.battery === false) { $('d-battery').textContent = 'No'; $('d-battery').className = 'v battery-no'; }
+  else { $('d-battery').textContent = 'unknown'; $('d-battery').className = 'v unknown'; }
+  $('d-apple').textContent = p.appleSat || '—';
+  $('d-google').textContent = p.googleSat || '—';
+  $('d-sat').textContent = p.satStatus || '—';
+  $('d-description').textContent = p.description || '—';
+  $('d-mh-box').innerHTML = p.mh ? `<div class="mh-box"><span class="label">🏠 Manufactured Home</span>${p.mhEligibility || ''}<br>${p.mhEligibilityNote || ''}</div>` : '';
+  $('d-why').textContent = p.why + '\n\nOutreach: ' + (p.angle || '');
+  if (p.lat && p.lng) {
+    $('d-gsat').href = `https://maps.google.com/maps?q=${encodeURIComponent(p.address+' '+p.city+' '+p.state)}&t=k&z=20`;
+    $('d-assessor').href = `https://appsweb.mohave.gov/data_apps/assessor_parcel_search?searchTerm=${encodeURIComponent(p.parcel||'')}`;
+    $('d-phone').href = `https://www.truepeoplesearch.com/results?streetaddress=${encodeURIComponent(p.address)}&citystatezip=${encodeURIComponent(p.city+' '+p.state+' '+p.zip)}`;
+  }
+  $('d-notes').value = state.notes[p.id] || '';
+  document.querySelectorAll('.obtn').forEach(b => b.classList.remove('active','apptset','notint','hassolar','renter','nih','called','notmoved','soldu'));
+  const out = state.outcomes[p.id];
+  if (out) {
+    const btn = document.querySelector(`.obtn[data-outcome="${out}"]`);
+    if (btn) { btn.classList.add('active', out); }
+  }
+  document.getElementById('detail').classList.add('open');
+}
+
+function closeDetail() { document.getElementById('detail').classList.remove('open'); currentPermit = null; }
+
+function saveLocal() {
+  if (!currentPermit) return;
+  state.notes[currentPermit.id] = document.getElementById('d-notes').value;
+  saveState();
+  const btn = document.querySelector('.save-btn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Saved';
+  setTimeout(() => { btn.textContent = orig; }, 1500);
+  if (view === 'list') renderList();
+}
+
+document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', () => setFilter(c.dataset.filter)));
+document.querySelectorAll('.fchip-sm').forEach(c => c.addEventListener('click', () => setFilter(c.dataset.filter)));
+document.querySelectorAll('.stat').forEach(s => s.addEventListener('click', () => setFilter(s.dataset.filter)));
+document.querySelectorAll('.obtn').forEach(b => b.addEventListener('click', e => {
+  if (!currentPermit) return;
+  const o = b.dataset.outcome;
+  const wasActive = b.classList.contains('active');
+  document.querySelectorAll('.obtn').forEach(x => x.classList.remove('active','apptset','notint','hassolar','renter','nih','called','notmoved','soldu'));
+  if (wasActive) {
+    delete state.outcomes[currentPermit.id];
+  } else {
+    b.classList.add('active', o);
+    state.outcomes[currentPermit.id] = o;
+  }
+  saveState();
+  // Re-render pins and list so dispositioned cards immediately disappear from active views.
+  // Update chip counts so Unknocked / All Active reflect the new state.
+  renderPins();
+  if (view === 'list') renderList();
+  updateChipCounts();
+  // Close the detail panel after a dispositioning outcome so Blake can move on.
+  if (DEAD_OUTCOMES.includes(o) && !wasActive) {
+    closeDetail();
+  }
+  e.stopPropagation();
+}));
+
+function updateChipCounts() {
+  // Recompute counts for chips that depend on outcome state and update their text live.
+  const all28 = PERMITS;
+  const blakeCore = all28.filter(p => p.bucket === 'bckeep' || p.bucket === 'bcverify');
+  const activeAlive = blakeCore.filter(p => !isDispositioned(p));
+  const unknocked = blakeCore.filter(p => !state.outcomes[p.id]);
+  const counts = {
+    all: activeAlive.length,
+    p1: activeAlive.filter(p => p.pBucket === 'p1').length,
+    p2a: activeAlive.filter(p => p.pBucket === 'p2a').length,
+    p2b: activeAlive.filter(p => p.pBucket === 'p2b').length,
+    p3: activeAlive.filter(p => p.pBucket === 'p3').length,
+    p4: activeAlive.filter(p => p.pBucket === 'p4').length,
+    p5: activeAlive.filter(p => p.pBucket === 'p5').length,
+    '86409': activeAlive.filter(p => p.zip === '86409').length,
+    '86413': activeAlive.filter(p => p.zip === '86413').length,
+    unknocked: unknocked.length,
+    mh: activeAlive.filter(p => p.mh).length
+  };
+  // Update primary chip text "All (X)", "🔥 Stalled (X)" etc.
+  const chipMap = {
+    all: 'All',
+    p1: '🔥 Stalled',
+    p2a: '🆕 Fresh Applied',
+    p2b: '🟠 Stalled Pre',
+    p3: '⚡ Recent ≤30d',
+    p4: '⚠️ Verify 30-60d',
+    p5: '💀 Expired',
+    '86409': '86409',
+    '86413': '86413',
+    unknocked: 'Unknocked',
+    mh: '🏠 MH Verify'
+  };
+  document.querySelectorAll('.fchip,.fchip-sm').forEach(chip => {
+    const f = chip.dataset.filter;
+    if (f in counts) {
+      const lbl = chipMap[f] || f;
+      chip.textContent = `${lbl} (${counts[f]})`;
+    }
+  });
+  // Update stat card numbers.
+  ['p1','p2a','p2b','p3','p4','p5'].forEach(p => {
+    const el = document.getElementById('stat-' + p);
+    if (el) el.textContent = counts[p];
+  });
+  const totalEl = document.getElementById('stat-total');
+  if (totalEl) totalEl.textContent = counts.all;
+}
+
+window.addEventListener('load', () => { initMap(); updateChipCounts(); });
+</script>
+
+</body>
+</html>
