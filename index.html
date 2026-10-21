@@ -164,12 +164,12 @@
 <div class="header">
   <div class="logo">Solar Resource USA</div>
   <h1>🔌 Kingman Permits — Blake</h1>
-  <div class="sub">Mohave County · UniSource · 86409 + 86413 + 86401 ref · Pulled Oct 20 2026</div>
-  <span class="zone">13 Active · Map + List · Oct 20 refresh</span>
+  <div class="sub">Mohave County + City of Kingman · UniSource · 86401 · 86409 · 86413 · Pulled Oct 20 2026</div>
+  <span class="zone">30 Active · Map + List · Oct 20 refresh</span>
 </div>
 
 <div class="build-summary">
-  <strong>Pull:</strong> 93 solar permits (86401/86409/86413) + 2 found by description → 72 dropped (Closed / final inspection / house already has a closed solar permit) → <strong>23 open · 13 Blake active</strong> | Status: In Review 1 · Ready To Issue 4 · Expired 8 | Buckets: P1 0 · P2A 1 · P2B 4 · P3 0 · P4 0 · P5 8 | <strong>10 new since May · 14 May permits now closed (installed) and removed · owners re-checked against the county assessor today</strong></div>
+  <strong>Pull:</strong> Mohave County: 95 solar permits → 72 dropped (closed / final inspection / house already has a closed solar permit) → 23 open. City of Kingman: 93 solar permits → 82 closed/finaled → 11 open. <strong>34 open · 30 Blake active</strong> | Status: In Review 2 · Issued 7 · Expired 16 · Ready To Issue 5 | Buckets: P1 5 · P2A 2 · P2B 5 · P3 0 · P4 2 · P5 16 | <strong>21 new since May · owners re-checked against the county assessor today</strong></div>
 </div>
 
 <div class="stats">
@@ -192,18 +192,18 @@
   <button class="fchip" data-filter="p5">💀 Expired (1)</button>
   <button class="fchip" data-filter="86409">86409 (13)</button>
   <button class="fchip" data-filter="86413">86413 (9)</button>
-  <button class="fchip ryan-chip" data-filter="ryan">86401 Ryan ref (7)</button>
+  <button class="fchip" data-filter="86401">86401 (0)</button>
   <button class="fchip" data-filter="unknocked">Unknocked</button>
 </div>
 <div class="filters-secondary" id="filters-secondary">
   <span class="filters-label">Decision tags ▸</span>
-  <button class="fchip-sm bckeep-chip" data-filter="bckeep">✅ Blake Keep (5)</button>
-  <button class="fchip-sm bcverify-chip" data-filter="bcverify">⚠️ Blake Verify First (8)</button>
-  <button class="fchip-sm builder-chip" data-filter="builder">🏗 Builder Watch (2)</button>
+  <button class="fchip-sm bckeep-chip" data-filter="bckeep">✅ Blake Keep (16)</button>
+  <button class="fchip-sm bcverify-chip" data-filter="bcverify">⚠️ Blake Verify First (14)</button>
+  <button class="fchip-sm builder-chip" data-filter="builder">🏗 Builder Watch (3)</button>
   <button class="fchip-sm removed-chip" data-filter="removed">❌ Removed (1)</button>
   <button class="fchip-sm" data-filter="mh">🏠 MH Verify (9)</button>
-  <button class="fchip-sm newest-chip" data-filter="newest">🆕 Newest First (13)</button>
-  <button class="fchip-sm" data-filter="audit">📋 Audit View (23)</button>
+  <button class="fchip-sm newest-chip" data-filter="newest">🆕 Newest First (30)</button>
+  <button class="fchip-sm" data-filter="audit">📋 Audit View (34)</button>
 </div>
 
 <div class="view-toggle">
@@ -288,7 +288,7 @@ const LS_KEY = 'srusa-kingman-permit-state-v2';
 const PERMITS = [
  {
   "id": "BLD-2026-03073",
-  "bucket": "ryan",
+  "bucket": "bckeep",
   "zip": "86401",
   "pBucket": "p2a",
   "address": "20438 E Panther Trl",
@@ -325,11 +325,12 @@ const PERMITS = [
   "satConflict": false,
   "why": "Just applied — still in county review, nothing installed yet. 40-acre property far east of town (Hualapai Mtn area), ~25 mi from central Kingman. Filed today.",
   "angle": "\"Saw you just applied for solar — before anything's installed, want a free side-by-side on the price?\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-02640",
-  "bucket": "ryan",
+  "bucket": "bckeep",
   "zip": "86401",
   "pBucket": "p4",
   "address": "4068 E Buckskin Ln",
@@ -366,11 +367,12 @@ const PERMITS = [
   "satConflict": false,
   "why": "Issued 40 days ago — install may not have started yet.",
   "angle": "\"Saw your solar permit just got issued — before they start, want a quick second look at the numbers?\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-00926",
-  "bucket": "ryan",
+  "bucket": "bcverify",
   "zip": "86401",
   "pBucket": "p5",
   "address": "7319 E Winchester Dr",
@@ -407,11 +409,12 @@ const PERMITS = [
   "satConflict": false,
   "why": "Permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home. Was an Angle Homes spec house in May; KRAUSE bought it since. They mail to Meadview — could be a rental or second home.",
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
-  "isNew": false
+  "isNew": false,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-03393",
-  "bucket": "ryan",
+  "bucket": "bckeep",
   "zip": "86401",
   "pBucket": "p1",
   "address": "5644 E Wagon Wheel Way",
@@ -448,11 +451,12 @@ const PERMITS = [
   "satConflict": false,
   "why": "Issued 314 days ago and still not finaled — install stalled.",
   "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
-  "isNew": false
+  "isNew": false,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-02309",
-  "bucket": "ryan",
+  "bucket": "bcverify",
   "zip": "86401",
   "pBucket": "p5",
   "address": "4248 E Cane Ranch Rd",
@@ -489,11 +493,12 @@ const PERMITS = [
   "satConflict": false,
   "why": "Permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home.",
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-01221",
-  "bucket": "ryan",
+  "bucket": "bcverify",
   "zip": "86401",
   "pBucket": "p1",
   "address": "4354 N Lookout Canyon Rd",
@@ -530,7 +535,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Issued 484 days ago and still not finaled — install stalled. Owner's mail goes to another address — may be a rental or second home. Vacant 41-acre parcel, no street address on county record — ground mount / off-grid build.",
   "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-03039",
@@ -571,7 +577,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Just applied — still in county review, nothing installed yet. Owner's mail goes to another address — may be a rental or second home. House sold since May (2026-07-01 / $354,000) — new owner may not know about the permit.",
   "angle": "\"Saw you just applied for solar — before anything's installed, want a free side-by-side on the price?\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-02235",
@@ -612,7 +619,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Just applied — still in county review, nothing installed yet. Owner's mail goes to another address — may be a rental or second home. County sent a deficiency notice 8/7/2026; owner hasn't resubmitted. Owner mails to Apple Valley, CA.",
   "angle": "\"Saw you just applied for solar — before anything's installed, want a free side-by-side on the price?\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-01527",
@@ -653,7 +661,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Approved but the contractor never picked up the permit.",
   "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-01282",
@@ -694,7 +703,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Approved but the contractor never picked up the permit.",
   "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
-  "isNew": false
+  "isNew": false,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-00889",
@@ -735,7 +745,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Permit expired without a final inspection — the job never closed out. Permit lists SMITH DAVID L & KIMBERLY B but the county shows FIGGINS bought it 12/2025 — ask for the Figgins.",
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-03520",
@@ -778,7 +789,8 @@ const PERMITS = [
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-03647",
@@ -821,7 +833,8 @@ const PERMITS = [
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-02731",
@@ -862,7 +875,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Issued 18 days ago — brand new. Owner's mail goes to another address — may be a rental or second home.",
   "angle": "\"Saw your solar permit just got issued — before they start, want a quick second look at the numbers?\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-01262",
@@ -903,7 +917,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Approved but the contractor never picked up the permit.",
   "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
-  "isNew": false
+  "isNew": false,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-01305",
@@ -946,7 +961,8 @@ const PERMITS = [
   "angle": "\"Your solar permit's been approved since spring but never picked up — are you still waiting on your installer?\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2026-00825",
@@ -989,7 +1005,8 @@ const PERMITS = [
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2024-00053",
@@ -1032,7 +1049,8 @@ const PERMITS = [
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-00406",
@@ -1075,7 +1093,8 @@ const PERMITS = [
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-03101",
@@ -1118,7 +1137,8 @@ const PERMITS = [
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
   "isNew": false,
   "mhEligibility": "Manufactured home per county record",
-  "mhEligibilityNote": "Verify it is affixed / double-wide at the door."
+  "mhEligibilityNote": "Verify it is affixed / double-wide at the door.",
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-02725",
@@ -1159,7 +1179,8 @@ const PERMITS = [
   "satConflict": false,
   "why": "Permit expired without a final inspection — the job never closed out.",
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
-  "isNew": false
+  "isNew": false,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-02697",
@@ -1200,11 +1221,12 @@ const PERMITS = [
   "satConflict": false,
   "why": "Permit expired without a final inspection — the job never closed out.",
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
-  "isNew": false
+  "isNew": false,
+  "source": "Mohave County"
  },
  {
   "id": "BLD-2025-02185",
-  "bucket": "ryan",
+  "bucket": "bcverify",
   "zip": "86401",
   "pBucket": "p5",
   "address": "5803 N Bull Mountain Dr",
@@ -1241,7 +1263,470 @@ const PERMITS = [
   "satConflict": false,
   "why": "Permit expired without a final inspection — the job never closed out.",
   "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
-  "isNew": true
+  "isNew": true,
+  "source": "Mohave County"
+ },
+ {
+  "id": "BLD26-0475",
+  "bucket": "builder",
+  "zip": "86401",
+  "pBucket": "p2b",
+  "address": "4336 Glencliff Ave",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": "",
+  "lng": "",
+  "parcel": "322-70-052",
+  "owner": "ANGLE HOMES INC",
+  "ownerType": "Builder",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2026-07-01 / $1,608,000",
+  "status": "Ready To Issue",
+  "statusLabel": "Ready To Issue · approved 10/13/2026, 7 days waiting",
+  "issued": null,
+  "approved": "10/13/2026",
+  "expire": "4/11/2027",
+  "submittedDate": "10/7/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City approved it but the contractor never picked up the permit. Owner's mail goes to another address — may be a rental or second home. Angle Homes lot — new construction, solar goes in with the build.",
+  "angle": "\"Your solar permit's approved but never picked up — are you still waiting on your installer?\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0423",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p4",
+  "address": "3239 Eagle Rock Rd",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.218636161564,
+  "lng": -114.00187476617,
+  "parcel": "311-05-001K",
+  "owner": "LUCE ROBERT A",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2022-02-01 / $763,500",
+  "status": "Issued",
+  "statusLabel": "Issued · 33 days",
+  "issued": "9/17/2026",
+  "approved": "9/9/2026",
+  "expire": "3/16/2027",
+  "submittedDate": "9/3/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 33 days ago — install may not have started yet.",
+  "angle": "\"Saw your solar permit just got issued — before they start, want a quick second look at the numbers?\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0030",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "2871 N Cypress St",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.211874075962,
+  "lng": -113.995210592583,
+  "parcel": "311-04-143Q",
+  "owner": "WILSON SANDRA M",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2019-02-01 / $200,000",
+  "status": "Expired",
+  "statusLabel": "Expired 8/10/2026 · never finaled",
+  "issued": "2/11/2026",
+  "approved": "1/26/2026",
+  "expire": "8/10/2026",
+  "submittedDate": "1/22/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City solar permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0249",
+  "bucket": "bckeep",
+  "zip": "86409",
+  "pBucket": "p2b",
+  "address": "3964 North Prescott St",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.238334397487,
+  "lng": -114.003561262896,
+  "parcel": "320-02-154R",
+  "owner": "THE MONEY PIT TURST DTD AUGUST 29 2025",
+  "ownerType": "Trust",
+  "mh": false,
+  "trust": true,
+  "msMatch": true,
+  "sale": null,
+  "status": "Ready To Issue",
+  "statusLabel": "Ready To Issue · approved 7/1/2026, 111 days waiting",
+  "issued": null,
+  "approved": "7/1/2026",
+  "expire": "12/28/2026",
+  "submittedDate": "5/15/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City approved it but the contractor never picked up the permit.",
+  "angle": "\"Your solar permit's approved but never picked up — are you still waiting on your installer?\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0274",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p1",
+  "address": "2638 Mullen Dr",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.211708403731,
+  "lng": -114.022221238574,
+  "parcel": "320-16-190A",
+  "owner": "COOK ALISON ROSS COOK BRIAN",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2025-11-01 / $363,500",
+  "status": "Issued",
+  "statusLabel": "Issued · 133 days",
+  "issued": "6/9/2026",
+  "approved": "6/4/2026",
+  "expire": "12/6/2026",
+  "submittedDate": "5/29/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 133 days ago and still not finaled — install stalled.",
+  "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0262",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p1",
+  "address": "111 Lead St",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.196643516268,
+  "lng": -114.058147147331,
+  "parcel": "304-05-037A",
+  "owner": "MEISNER TERESE J",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": null,
+  "status": "Issued",
+  "statusLabel": "Issued · 141 days",
+  "issued": "6/1/2026",
+  "approved": "5/27/2026",
+  "expire": "11/28/2026",
+  "submittedDate": "5/20/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 141 days ago and still not finaled — install stalled.",
+  "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0252",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p1",
+  "address": "3300 Calumet Ave",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.219257116556,
+  "lng": -113.998405352803,
+  "parcel": "311-05-003W",
+  "owner": "MCMAHON DENNIS JAMES & KORENA J",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2024-09-01 / $229,900",
+  "status": "Issued",
+  "statusLabel": "Issued · 152 days",
+  "issued": "5/21/2026",
+  "approved": "5/20/2026",
+  "expire": "11/17/2026",
+  "submittedDate": "5/18/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "Issued 152 days ago and still not finaled — install stalled.",
+  "angle": "\"Your solar permit was issued months ago — still waiting on the install? Happy to give you a second opinion.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0100",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "2053 Robert Mitchum Dr",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.238348056855,
+  "lng": -114.030213465628,
+  "parcel": "320-45-035",
+  "owner": "THE WOODS FAMILY LIVING TRUST",
+  "ownerType": "Trust",
+  "mh": false,
+  "trust": true,
+  "msMatch": true,
+  "sale": "2023-11-01 / $378,000",
+  "status": "Expired",
+  "statusLabel": "Expired 10/5/2026 · never finaled",
+  "issued": null,
+  "approved": "3/12/2026",
+  "expire": "10/5/2026",
+  "submittedDate": "3/9/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City solar permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0144",
+  "bucket": "bcverify",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "3649 Wheatland Ave",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": "",
+  "lng": "",
+  "parcel": "322-71-022",
+  "owner": "LAWRENCE ANTHONY DAVIS AND DEBORAH KITE DAVIS LIVING TRUST",
+  "ownerType": "Trust",
+  "mh": false,
+  "trust": true,
+  "msMatch": true,
+  "sale": "2026-04-01 / $430,400",
+  "status": "Expired",
+  "statusLabel": "Expired 10/4/2026 · never finaled",
+  "issued": "4/7/2026",
+  "approved": "4/7/2026",
+  "expire": "10/4/2026",
+  "submittedDate": "3/5/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City solar permit expired without a final inspection — the job never closed out. Bought 4/2026 (new owners). An earlier solar permit here (BLD26-0097) closed 3/31 before this one was issued — likely a replaced application, but check the roof.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0152",
+  "bucket": "bcverify",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "3616 Heather Ave",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.225178,
+  "lng": -113.990513,
+  "parcel": "322-34-025",
+  "owner": "BARTH DAVID",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": false,
+  "sale": "2025-12-01 / $220,000",
+  "status": "Expired",
+  "statusLabel": "Expired 10/3/2026 · never finaled",
+  "issued": "4/6/2026",
+  "approved": "4/2/2026",
+  "expire": "10/3/2026",
+  "submittedDate": "3/31/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City solar permit expired without a final inspection — the job never closed out. Owner's mail goes to another address — may be a rental or second home.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true,
+  "source": "City of Kingman"
+ },
+ {
+  "id": "BLD26-0072",
+  "bucket": "bckeep",
+  "zip": "86401",
+  "pBucket": "p5",
+  "address": "3662 Richie Dr",
+  "city": "Kingman",
+  "state": "AZ",
+  "lat": 35.225883,
+  "lng": -113.988607,
+  "parcel": "322-56-055",
+  "owner": "VAN SICKLE LISA",
+  "ownerType": "Individual",
+  "mh": false,
+  "trust": false,
+  "msMatch": true,
+  "sale": "2023-11-01 / $349,900",
+  "status": "Expired",
+  "statusLabel": "Expired 9/22/2026 · never finaled",
+  "issued": "3/26/2026",
+  "approved": "3/26/2026",
+  "expire": "9/22/2026",
+  "submittedDate": "2/13/2026",
+  "contractor": null,
+  "license": null,
+  "contractorSrc": "unknown",
+  "contractorAuditNote": "City of Kingman portal does not show it",
+  "systemKW": null,
+  "systemDetail": null,
+  "systemSrc": null,
+  "battery": null,
+  "batteryModel": null,
+  "description": "City of Kingman Solar permit — the city portal shows no project description.",
+  "appleSat": "Not checked — look at the roof when you pull up",
+  "googleSat": "—",
+  "satStatus": "unchecked",
+  "satConflict": false,
+  "why": "City solar permit expired without a final inspection — the job never closed out.",
+  "angle": "\"Saw your solar permit expired — did the install fall through? I can show you where things stand and what it'd cost today.\"",
+  "isNew": true,
+  "source": "City of Kingman"
  }
 ];
 
@@ -1348,7 +1833,7 @@ function renderPins() {
 const DEAD_OUTCOMES = ['notint','hassolar','renter','soldu'];
 function isDispositioned(p) { return DEAD_OUTCOMES.includes(state.outcomes[p.id]); }
 // Active working views hide dispositioned cards. Decision/audit views show everything.
-const ACTIVE_WORKING_VIEWS = ['all','p1','p2a','p2b','p3','p4','p5','86409','86413','unknocked','newest','mh'];
+const ACTIVE_WORKING_VIEWS = ['all','p1','p2a','p2b','p3','p4','p5','86401','86409','86413','unknocked','newest','mh'];
 
 function filterPermits() {
   const f = PERMITS.slice();
@@ -1367,6 +1852,7 @@ function filterPermits() {
     case 'p3':        return active.filter(p => p.pBucket === 'p3');
     case 'p4':        return active.filter(p => p.pBucket === 'p4');
     case 'p5':        return active.filter(p => p.pBucket === 'p5');
+    case '86401':     return active.filter(p => p.zip === '86401');
     case '86409':     return active.filter(p => p.zip === '86409');
     case '86413':     return active.filter(p => p.zip === '86413');
     case 'ryan':      return f.filter(p => p.bucket === 'ryan');
@@ -1415,7 +1901,7 @@ function renderList() {
   // Newest First: pure date-desc sort, no grouping
   const newestMode = currentFilter === 'newest';
   // For active-style filters, group by P-bucket. For decision filters, group by bucket.
-  const groupByP = !newestMode && ['all','unknocked','86409','86413','mh'].includes(currentFilter);
+  const groupByP = !newestMode && ['all','unknocked','86401','86409','86413','mh'].includes(currentFilter);
   if (newestMode) {
     filtered.sort((a,b) => submissionDateMs(b) - submissionDateMs(a));
   } else {
@@ -1473,6 +1959,7 @@ function renderList() {
     if (p.mh) tags.push('<span class="bucket-badge bb-mh">🏠 MH</span>');
     if (p.trust) tags.push('<span class="bucket-badge bb-trust">📜 Trust</span>');
     if (p.isNew) tags.push('<span class="bucket-badge bb-urgent">🆕 NEW</span>');
+    if (p.source==='City of Kingman') tags.push('<span class="bucket-badge bb-trust">🏛 City permit</span>');
     if (outcome) tags.push(`<span class="bucket-badge bb-bckeep">✓ ${outcomeLabel(outcome)}</span>`);
     const mhBox = p.mh ? `<div class="lcard-mh"><strong>🏠 MH:</strong> ${p.mhEligibility || 'eligibility pending'} — ${p.mhEligibilityNote || ''}</div>` : '';
     html += `
@@ -1549,6 +2036,7 @@ function openDetail(p) {
   if (p.mh) badges += `<span class="bucket-badge bb-mh">🏠 MH</span>`;
   if (p.trust) badges += `<span class="bucket-badge bb-trust">📜 Trust</span>`;
   if (p.isNew) badges += `<span class="bucket-badge bb-urgent">🆕 NEW since May</span>`;
+  if (p.source==='City of Kingman') badges += `<span class="bucket-badge bb-trust">🏛 City of Kingman permit</span>`;
   $('d-badges').innerHTML = badges;
   $('d-status').textContent = p.statusLabel;
   $('d-issued').textContent = fmtDate(p.issued);
@@ -1650,6 +2138,7 @@ function updateChipCounts() {
     p3: activeAlive.filter(p => p.pBucket === 'p3').length,
     p4: activeAlive.filter(p => p.pBucket === 'p4').length,
     p5: activeAlive.filter(p => p.pBucket === 'p5').length,
+    '86401': activeAlive.filter(p => p.zip === '86401').length,
     '86409': activeAlive.filter(p => p.zip === '86409').length,
     '86413': activeAlive.filter(p => p.zip === '86413').length,
     unknocked: unknocked.length,
@@ -1664,6 +2153,7 @@ function updateChipCounts() {
     p3: '⚡ Recent ≤30d',
     p4: '⚠️ Verify 30-60d',
     p5: '💀 Expired',
+    '86401': '86401',
     '86409': '86409',
     '86413': '86413',
     unknocked: 'Unknocked',
